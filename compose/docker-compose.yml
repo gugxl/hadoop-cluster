@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  namenode:
+    build:
+      context: ../docker/hadoop
+    container_name: hadoop-namenode
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+    volumes:
+      - namenode:/hadoop/dfs/name
+    environment:
+      - HDFS_NAMENODE=true
+    command: ["bash", "-c", "/scripts/init-hdfs.sh && tail -f /dev/null"]
+
+  datanode:
+    build:
+      context: ../docker/hadoop
+    container_name: hadoop-datanode
+    depends_on:
+      - namenode
+    ports:
+      - "9864:9864"
+    volumes:
+      - datanode:/hadoop/dfs/data
+    environment:
+      - HDFS_DATANODE=true
+
+volumes:
+  namenode:
+  datanode:
